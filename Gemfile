@@ -27,6 +27,7 @@ gem 'puma', '~> 3.7'
 
 gem 'capybara'
 gem 'selenium-webdriver'
+gem 'rest-client'
 
 gem 'activerecord-import'
 gem 'retryable'
