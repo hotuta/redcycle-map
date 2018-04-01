@@ -1,5 +1,7 @@
 class Station < ApplicationRecord
-  def self.get_redcycle
+  has_many :bike_numbers
+
+  def self.get_station
     session = Capybara::Session.new(:chrome)
     login(session)
     get_cycle_port(session)
@@ -27,16 +29,18 @@ def get_cycle_port(session)
 
     loop do
       ports_path = session.all('.port_list_btn > div > a')
+
+      stations = []
       ports_path.count.times do |port_count|
-        binding.pry
-
-        # TODO: 入れていくぞい
         station = Station.new
-
-
-        puts ports_path[port_count].text.match(/(.*)\d台/)[1]
-        puts ports_path[port_count].text.match(/.*(\d)台/)[1] + "台"
+        station.numbering = ports_path[port_count].text.match(/[A-Z][0-9]+-[0-9]+/)[0]
+        station.name = ports_path[port_count].text.match(/(.*)\d台/)[1]
+        bike_number = station.bike_numbers.build
+        bike_number.number = ports_path[port_count].text.match(/.*(\d)台/)[1]
+        stations << station
       end
+
+      Station.import stations, recursive: true, on_duplicate_key_update: [:numbering]
 
       next_css_path = 'div.main_inner_wide_right > form:nth-child(1) > .button_submit[value="→　次へ/NEXT PAGE"]'
       if session.has_css?(next_css_path)
