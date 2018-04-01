@@ -1,4 +1,4 @@
-class Redcycle < ApplicationRecord
+class Station < ApplicationRecord
   def self.get_redcycle
     session = Capybara::Session.new(:chrome)
     login(session)
@@ -28,6 +28,12 @@ def get_cycle_port(session)
     loop do
       ports_path = session.all('.port_list_btn > div > a')
       ports_path.count.times do |port_count|
+        binding.pry
+
+        # TODO: 入れていくぞい
+        station = Station.new
+
+
         puts ports_path[port_count].text.match(/(.*)\d台/)[1]
         puts ports_path[port_count].text.match(/.*(\d)台/)[1] + "台"
       end
