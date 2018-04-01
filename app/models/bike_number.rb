@@ -1,0 +1,2 @@
+class BikeNumber < ApplicationRecord
+end
