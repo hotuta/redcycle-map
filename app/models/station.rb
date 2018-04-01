@@ -3,6 +3,13 @@ class Station < ApplicationRecord
 
   @session = Capybara::Session.new(:chrome)
 
+  def self.edit_mymaps
+    self.get_station
+    get_maps
+    parse_and_edit_kml
+    export_kmz
+  end
+
   def self.get_station
     login
     get_cycle_port
@@ -10,6 +17,52 @@ class Station < ApplicationRecord
 end
 
 private
+
+def get_maps
+  # 東京自転車シェアリング ポートマップ/Tokyo Bike Share Station Map - Google My Maps
+  # https://www.google.com/maps/d/u/0/viewer?mid=1L2l1EnQJhCNlm_Xxkp9RTjIj68Q
+
+  kmz_map_url = 'https://www.google.com/maps/d/u/0/kml?mid=1L2l1EnQJhCNlm_Xxkp9RTjIj68Q'
+  response = RestClient.get kmz_map_url
+
+  f = File.new("map.kmz", "wb")
+  f << response.body
+  f.close
+
+  Archive::Zip.extract('map.kmz', './map')
+end
+
+def parse_and_edit_kml
+  file = File.read("map/doc.kml")
+  @doc = Nokogiri::XML(file)
+  @doc.remove_namespaces!
+
+  station_names = @doc.xpath('//Folder/Placemark/name')
+  style_urls = @doc.xpath('//Folder//styleUrl')
+
+  station_names.zip(style_urls).each do |station_name, style_url|
+    station_numbering = station_name.content.match(/[A-Z][0-9]+-[0-9]+/)
+    find_numbering = Station.find_by(numbering: station_numbering[0])
+    if station_numbering && find_numbering
+      bike_number = find_numbering.bike_numbers.first.number
+      if bike_number == 0
+        style_url.content = "#icon-ci-2"
+      end
+      station_name.content = "[#{bike_number}台] " + station_name.content
+    else
+      next
+    end
+  end
+end
+
+def export_kmz
+  f = File.new("map/doc.kml", "w")
+  f << @doc.to_xml
+  f.close
+
+  Archive::Zip.archive('edit_map.kmz', 'map/.')
+  Archive::Zip.extract('edit_map.kmz', './edit_map')
+end
 
 def login
   @session.visit 'https://tcc.docomo-cycle.jp/cycle/TYO/cs_web_main.php'
