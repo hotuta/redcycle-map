@@ -24,7 +24,7 @@ def get_cycle_port
 
   area_id.count.times do |area_count|
     wait_for_ajax
-    wait_has_css( '.main_inner_wide')
+    wait_has_css('.main_inner_wide')
     # FIXME: 画面が切り替わってsessionが変わってしまう:sob:
     @session.select @session.all('#AreaID option')[area_count].text, from: 'AreaID'
 
@@ -33,12 +33,17 @@ def get_cycle_port
 
       stations = []
       ports_path.count.times do |port_count|
-        station = Station.new
-        station.numbering = ports_path[port_count].text.match(/[A-Z][0-9]+-[0-9]+/)[0]
-        station.name = ports_path[port_count].text.match(/(.*)\d台/)[1]
-        bike_number = station.bike_numbers.build
-        bike_number.number = ports_path[port_count].text.match(/.*(\d)台/)[1]
-        stations << station
+        station_numbering = ports_path[port_count].text.match(/[A-Z][0-9]+-[0-9]+/)
+        if station_numbering
+          station = Station.new
+          station.numbering = station_numbering[0]
+          station.name = ports_path[port_count].text.match(/(.*)\d台/)[1]
+          bike_number = station.bike_numbers.build
+          bike_number.number = ports_path[port_count].text.match(/.*(\d)台/)[1]
+          stations << station
+        else
+          next
+        end
       end
 
       Station.import stations, recursive: true, on_duplicate_key_update: [:numbering]
