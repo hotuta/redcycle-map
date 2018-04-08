@@ -70,7 +70,7 @@ def upload_kmz
   @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
   # YAMLファイルにCookie情報をエクスポート
   # File.open('./yaml.dump', 'w') {|f| f.write(YAML.dump(@session.driver.browser.manage.all_cookies))}
-  YAML.load(File.read('./yaml.dump')).each do |d|
+  YAML.load(Base64.strict_decode64(ENV['YAML_DUMP'])).each do |d|
     @session.driver.browser.manage.add_cookie d
   end
   @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
