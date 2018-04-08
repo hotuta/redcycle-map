@@ -31,6 +31,7 @@ def get_maps
   f.close
 
   Archive::Zip.extract('map.kmz', './map')
+  File.delete 'map.kmz'
 end
 
 def parse_and_edit_kml
