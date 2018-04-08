@@ -91,6 +91,7 @@ def get_cycle_port
           station = Station.new
           station.numbering = station_numbering[0]
           station.name = ports_path[port_count].text.match(/(.*)\d台/)[1]
+          station.bike_number = ports_path[port_count].text.match(/.*(\d)台/)[1]
           bike_number = station.bike_numbers.build
           bike_number.number = ports_path[port_count].text.match(/.*(\d)台/)[1]
           stations << station
@@ -99,7 +100,7 @@ def get_cycle_port
         end
       end
 
-      Station.import stations, recursive: true, on_duplicate_key_update: [:numbering]
+      Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: [:numbering], columns: [:bike_number]}
 
       next_css_path = 'div.main_inner_wide_right > form:nth-child(1) > .button_submit[value="→　次へ/NEXT PAGE"]'
       if @session.has_css?(next_css_path)

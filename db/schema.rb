@@ -25,8 +25,10 @@ ActiveRecord::Schema.define(version: 20180401122347) do
   create_table "stations", force: :cascade do |t|
     t.text "numbering"
     t.text "name"
+    t.integer "bike_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["numbering"], name: "index_stations_on_numbering", unique: true
   end
 
 end
