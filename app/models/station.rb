@@ -8,6 +8,7 @@ class Station < ApplicationRecord
     get_maps
     parse_and_edit_kml
     export_kmz
+    upload_kmz
   end
 
   def self.get_station
@@ -62,6 +63,44 @@ def export_kmz
 
   Archive::Zip.archive('edit_map.kmz', 'map/.')
   Archive::Zip.extract('edit_map.kmz', './edit_map')
+end
+
+def upload_kmz
+  @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
+  # YAMLファイルにCookie情報をエクスポート
+  # File.open('./yaml.dump', 'w') {|f| f.write(YAML.dump(@session.driver.browser.manage.all_cookies))}
+  YAML.load(File.read('./yaml.dump')).each do |d|
+    @session.driver.browser.manage.add_cookie d
+  end
+  @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
+
+  # FIXME: sleepは暫定措置
+  sleep 15
+  @session.find(:id, "map-action-add-layer").click
+  sleep 15
+  @session.find(:id, "ly1-layerview-import-link").click
+  sleep 15
+
+  html = @session.driver.browser.page_source
+  doc = Nokogiri::HTML(html)
+
+  frame = doc.xpath("/html/body/div/div[2]/iframe").attribute("id").text
+  @session.driver.browser.switch_to.frame frame
+
+  filename = 'edit_map.kmz'
+  file = File.join(Dir.pwd, filename)
+  @session.find(:xpath, "//*[@id='doclist']/div/div[4]/div[2]/div/div[2]/div/div/div[1]/div/div[2]/input[@type='file']", visible: false).send_keys file
+
+  @session.driver.browser.switch_to.window @session.driver.browser.window_handle
+
+  # レイヤーを消す
+  sleep 15
+  @session.find(:xpath, "//div[@id='ly0-layer-header']/div[3]", visible: false).click
+  sleep 15
+  @session.find(:xpath, '//*[@id="layerview-menu"]/div[2]/div', visible: false).click
+  sleep 15
+  @session.find(:xpath, '//*[@id="cannot-undo-dialog"]/div[3]/button[1]', visible: false).click
+  sleep 15
 end
 
 def login
