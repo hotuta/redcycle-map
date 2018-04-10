@@ -39,6 +39,9 @@ def parse_and_edit_kml
   @doc = Nokogiri::XML(file)
   @doc.remove_namespaces!
 
+  layer_name = @doc.xpath('//Folder/name').first
+  layer_name.content = "#{DateTime.now.strftime('%-m月%d日%H時%M分')}現在"
+
   station_names = @doc.xpath('//Folder/Placemark/name')
   style_urls = @doc.xpath('//Folder//styleUrl')
 
