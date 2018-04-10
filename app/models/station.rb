@@ -105,6 +105,7 @@ def upload_kmz
   sleep 15
   @session.find(:xpath, '//*[@id="cannot-undo-dialog"]/div[3]/button[1]', visible: false).click
   sleep 15
+  @session.driver.quit
 end
 
 def login
