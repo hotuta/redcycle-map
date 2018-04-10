@@ -135,8 +135,9 @@ def get_cycle_port
           station.numbering = station_numbering[0]
           station.name = ports_path[port_count].text.match(/(.*)\d台/)[1]
           station.bike_number = ports_path[port_count].text.match(/.*(\d)台/)[1]
-          bike_number = station.bike_numbers.build
-          bike_number.number = ports_path[port_count].text.match(/.*(\d)台/)[1]
+          # TODO:ポートのバイク台数を取得時毎に保存したい。ただ、Herokuは1万レコード制限があるので、CloudGarageにPostgreSQL鯖を立てて設定をしてから有効化する。
+          # bike_number = station.bike_numbers.build
+          # bike_number.number = ports_path[port_count].text.match(/.*(\d)台/)[1]
           stations << station
         else
           next
