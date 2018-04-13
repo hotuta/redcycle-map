@@ -49,7 +49,7 @@ class Station < ApplicationRecord
         station_numbering = station_name.content.match(/[A-Z][0-9]+-[0-9]+/)
         find_numbering = Station.find_by(numbering: station_numbering[0])
         if station_numbering && find_numbering
-          bike_number = find_numbering.bike_numbers.first.number
+          bike_number = find_numbering.bike_number
           if bike_number == 0
             style_url.content = "#icon-ci-2"
           end
@@ -77,6 +77,8 @@ class Station < ApplicationRecord
         @session.driver.browser.manage.add_cookie d
       end
       @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
+
+      # TODO: 既に空のレイヤーが追加されている場合は削除する
 
       # FIXME: sleepは暫定措置
       sleep 15
