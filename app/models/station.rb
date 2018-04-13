@@ -78,9 +78,16 @@ class Station < ApplicationRecord
       end
       @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
 
-      # TODO: 既に空のレイヤーが追加されている場合は削除する
-
       # FIXME: sleepは暫定措置
+      sleep 15
+
+      # 既に空のレイヤーが追加されている場合は削除する
+      if @session.has_xpath?("//div[@id='ly1-layer-header']/div[3]")
+        delete_layer("//div[@id='ly1-layer-header']/div[3]")
+        sleep 10
+        @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
+      end
+
       sleep 15
       @session.find(:id, "map-action-add-layer").click
       sleep 15
@@ -101,11 +108,7 @@ class Station < ApplicationRecord
 
       # レイヤーを消す
       sleep 15
-      @session.find(:xpath, "//div[@id='ly0-layer-header']/div[3]", visible: false).click
-      sleep 15
-      @session.find(:xpath, '//*[@id="layerview-menu"]/div[2]/div', visible: false).click
-      sleep 15
-      @session.find(:xpath, '//*[@id="cannot-undo-dialog"]/div[3]/button[1]', visible: false).click
+      delete_layer("//div[@id='ly0-layer-header']/div[3]")
       sleep 15
       @session.driver.quit
     end
@@ -157,6 +160,14 @@ class Station < ApplicationRecord
           end
         end
       end
+    end
+
+    def delete_layer(layer_xpath)
+      @session.find(:xpath, layer_xpath, visible: false).click
+      sleep 10
+      @session.find(:xpath, "//*[@id='layerview-menu']/div[2]/div", visible: false).click
+      sleep 10
+      @session.find(:xpath, "//*[@id='cannot-undo-dialog']/div[3]/button[1]", visible: false).click
     end
 
     def wait_has_css(css_path)
