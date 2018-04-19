@@ -1,7 +1,7 @@
 class Station < ApplicationRecord
   has_many :bike_numbers
 
-  @session = Capybara::Session.new(:chrome)
+  @session = Capybara::Session.new(:selenium)
 
   def self.edit_mymaps
     self.get_station
