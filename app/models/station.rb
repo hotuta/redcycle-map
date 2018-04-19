@@ -111,6 +111,7 @@ class Station < ApplicationRecord
       delete_layer("//div[@id='ly0-layer-header']/div[3]")
       sleep 15
       @session.driver.quit
+      File.delete 'edit_map.kmz'
     end
 
     def login
