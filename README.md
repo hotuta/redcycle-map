@@ -1,24 +1,38 @@
-# README
+# 赤チャリマップ
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+非公式の赤チャリマップ(東京自転車シェアリング ポートマップ)
 
-Things you may want to cover:
+## 概要
 
-* Ruby version
+- 各ポートのタイトルに台数を表示
+    - 0台の場合はアイコンをグレーにして表示
+    
+## 開発予定
 
-* System dependencies
+- [ ] 自転車番号毎の情報を取得
+    - [ ] 各ポートの説明に自転車番号一覧を説明に追加(予約を超絶便利にしたい)
+    - [ ] 自転車毎のポート移動履歴と滞在時間を表示(バッテリー切れなど不良自転車は滞在が他と比べて長いはず)
 
-* Configuration
+## URL
 
-* Database creation
+### 非公式マップ(Googleマイマップ)
 
-* Database initialization
+https://www.google.com/maps/d/viewer?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p
 
-* How to run the test suite
+### 本家(Googleマイマップ)
 
-* Services (job queues, cache servers, search engines, etc.)
+https://www.google.com/maps/d/viewer?mid=1L2l1EnQJhCNlm_Xxkp9RTjIj68Q
 
-* Deployment instructions
+## 動作方法
 
-* ...
+### Heroku
+
+TBD
+
+```shell
+heroku scale cron=1
+```
+
+## ライセンス
+
+MIT
