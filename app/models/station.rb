@@ -131,6 +131,7 @@ class Station < ApplicationRecord
 
         loop do
           ports_path = @session.all('.port_list_btn > div > a')
+          park_ids_path = @session.all(".sp_view > form > input[name='ParkingID']", visible: false)
 
           stations = []
           ports_path.count.times do |port_count|
@@ -140,6 +141,7 @@ class Station < ApplicationRecord
               station.numbering = station_numbering[0]
               station.name = ports_path[port_count].text.match(/(.*.\D+)\d+台/)[1]
               station.bike_number = ports_path[port_count].text.match(/\D+(\d+)台/)[1]
+              station.park_id = sprintf("%08d", park_ids_path[port_count].value)
               # TODO:ポートのバイク台数を取得時毎に保存したい。ただ、Herokuは1万レコード制限があるので、CloudGarageにPostgreSQL鯖を立てて設定をしてから有効化する。
               # bike_number = station.bike_numbers.build
               # bike_number.number = ports_path[port_count].text.match(/.*(\d)台/)[1]
@@ -149,7 +151,8 @@ class Station < ApplicationRecord
             end
           end
 
-          Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: [:numbering], columns: [:bike_number]}
+          columns = Station.column_names - ["id", "numbering", "created_at", "updated_at"]
+          Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: [:numbering], columns: columns}
 
           next_css_path = 'div.main_inner_wide_right > form:nth-child(1) > .button_submit[value="→　次へ/NEXT PAGE"]'
           if @session.has_css?(next_css_path)

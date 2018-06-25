@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180401122347) do
+ActiveRecord::Schema.define(version: 20180625110006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20180401122347) do
     t.integer "bike_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "park_id"
     t.index ["numbering"], name: "index_stations_on_numbering", unique: true
   end
 
