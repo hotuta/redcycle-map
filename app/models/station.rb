@@ -3,20 +3,20 @@ class Station < ApplicationRecord
 
   @session = Capybara::Session.new(:selenium)
 
-  def self.edit_mymaps
-    self.get_station
-    get_maps
-    parse_and_edit_kml
-    export_kmz
-    upload_kmz
-  end
-
-  def self.get_station
-    login
-    get_cycle_port
-  end
-
   class << self
+    def edit_mymaps
+      get_station
+      get_maps
+      parse_and_edit_kml
+      export_kmz
+      upload_kmz
+    end
+
+    def get_station
+      login
+      get_cycle_port
+    end
+
     private
 
     def get_maps
