@@ -17,8 +17,6 @@ class Station < ApplicationRecord
       get_cycle_port
     end
 
-    private
-
     def get_maps
       # 東京自転車シェアリング ポートマップ/Tokyo Bike Share Station Map - Google My Maps
       # https://www.google.com/maps/d/u/0/viewer?mid=1L2l1EnQJhCNlm_Xxkp9RTjIj68Q
