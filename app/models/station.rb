@@ -4,8 +4,8 @@ class Station < ApplicationRecord
   @session = Capybara::Session.new(:selenium)
 
   class << self
-    def edit_mymaps
-      get_station
+    def update_mymaps
+      get_bikes
       get_maps
       parse_and_edit_kml
       export_kmz

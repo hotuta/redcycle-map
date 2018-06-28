@@ -7,7 +7,11 @@ module Clockwork
     puts "Running #{job}"
   end
 
-  every(10.minute, 'Station') do
-    Station.edit_mymaps
+  every(1.days, 'Get station') do
+    Station.update_mymaps
+  end
+
+  every(10.minute, 'Update bike number') do
+    Station.get_bikes
   end
 end
