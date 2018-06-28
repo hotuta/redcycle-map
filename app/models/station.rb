@@ -164,6 +164,31 @@ class Station < ApplicationRecord
       end
     end
 
+    def get_bikes
+      api_url = 'https://tcc.docomo-cycle.jp/cgi-bin/csapi/csapiVD'
+      header = {content_type: 'application/json'}
+      stations = []
+      Station.all.each do |port|
+        query_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+    <csreq>
+        <msgtype>3</msgtype>
+        <aplcode>#{ENV['APLCODE']}</aplcode>
+        <park_id>#{port.park_id}</park_id>
+        <get_num>100</get_num>
+        <get_start_no>1</get_start_no>
+    </csreq>"
+        res = RestClient.post(api_url, query_xml, header) {|response| response}
+        doc = Nokogiri::XML(res.body)
+        station = Station.new
+        station.numbering = port.numbering
+        station.bike_number = doc.at('//total_num').text
+        stations << station
+        sleep rand(1..2)
+      end
+
+      Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: :numbering, columns: [:bike_number]}
+    end
+
     def delete_layer(layer_xpath)
       @session.find(:xpath, layer_xpath, visible: false).click
       sleep 10
