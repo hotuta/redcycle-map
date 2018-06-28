@@ -168,7 +168,7 @@ class Station < ApplicationRecord
       api_url = 'https://tcc.docomo-cycle.jp/cgi-bin/csapi/csapiVD'
       header = {content_type: 'application/json'}
       stations = []
-      Station.all.each do |port|
+      Station.where(updated_at: [1.days.ago...Time.now]).each do |port|
         query_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <csreq>
         <msgtype>3</msgtype>
