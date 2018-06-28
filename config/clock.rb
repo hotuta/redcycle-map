@@ -8,10 +8,10 @@ module Clockwork
   end
 
   every(1.days, 'Get station') do
-    Station.update_mymaps
+    Station.get_station
   end
 
   every(10.minute, 'Update bike number') do
-    Station.get_bikes
+    Station.update_mymaps
   end
 end
