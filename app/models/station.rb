@@ -44,7 +44,7 @@ class Station < ApplicationRecord
       style_urls = @doc.xpath('//Folder//styleUrl')
 
       station_names.zip(style_urls).each do |station_name, style_url|
-        station_numbering = station_name.content.match(/[A-Z][0-9]+-[0-9]+/)
+        station_numbering = station_name.content.match(/[A-Z][0-9]+[-|‐][0-9]+/)
         find_numbering = Station.find_by(numbering: station_numbering[0])
         if station_numbering && find_numbering
           bike_number = find_numbering.bike_number
