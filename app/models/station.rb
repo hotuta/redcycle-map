@@ -80,11 +80,9 @@ class Station < ApplicationRecord
       sleep 15
 
       # 既に空のレイヤーが追加されている場合は削除する
-      if @session.has_xpath?("//div[@id='ly1-layer-header']/div[3]")
-        delete_layer("//div[@id='ly1-layer-header']/div[3]")
-        sleep 10
-        @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
-      end
+      @delete_layer_xpath = "//div[@id='ly1-layer-header']/div[3]"
+      @delete_has_xpath = @delete_layer_xpath
+      delete_layer_has_xpath
 
       sleep 15
       @session.find(:id, "map-action-add-layer").click
@@ -106,7 +104,8 @@ class Station < ApplicationRecord
 
       # レイヤーを消す
       sleep 15
-      delete_layer("//div[@id='ly0-layer-header']/div[3]")
+      @delete_layer_xpath = "//div[@id='ly0-layer-header']/div[3]"
+      delete_layer_has_xpath
       sleep 15
       @session.driver.quit
       File.delete 'edit_map.kmz'
@@ -189,12 +188,22 @@ class Station < ApplicationRecord
       Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: :numbering, columns: [:bike_number]}
     end
 
-    def delete_layer(layer_xpath)
-      @session.find(:xpath, layer_xpath, visible: false).click
-      sleep 10
-      @session.find(:xpath, "//*[@id='layerview-menu']/div[2]/div", visible: false).click
-      sleep 10
-      @session.find(:xpath, "//*[@id='cannot-undo-dialog']/div[3]/button[1]", visible: false).click
+    def delete_layer_has_xpath
+      loop do
+        @session.refresh
+        sleep 15
+        if @session.has_xpath?(@delete_has_xpath)
+          puts @delete_layer_xpath
+          @session.find(:xpath, @delete_layer_xpath, visible: false).hover.click
+          sleep 5
+          @session.all(:xpath, "//*[@id='layerview-menu']/div[2]/div", visible: false).first.hover.click
+          sleep 10
+          @session.find(:xpath, "//*[@id='cannot-undo-dialog']/div[3]/button[1]", visible: false).hover.click
+          sleep 15
+        else
+          break
+        end
+      end
     end
 
     def wait_has_css(css_path)
