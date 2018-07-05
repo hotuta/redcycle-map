@@ -183,7 +183,7 @@ class Station < ApplicationRecord
         station.numbering = port.numbering
         station.bike_number = doc.at('//total_num').text
         stations << station
-        sleep rand(1..2)
+        sleep rand(0.3..0.5)
       end
 
       Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: :numbering, columns: [:bike_number]}
