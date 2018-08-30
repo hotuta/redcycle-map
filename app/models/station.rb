@@ -42,12 +42,22 @@ class Station < ApplicationRecord
 
       station_names = @doc.xpath('//Folder/Placemark/name')
       style_urls = @doc.xpath('//Folder//styleUrl')
+      coordinates = @doc.xpath('//Folder//coordinates')
 
-      station_names.zip(style_urls).each do |station_name, style_url|
+      stations = []
+      station_names.zip(style_urls, coordinates).each do |station_name, style_url, coordinate|
         station_numbering = station_name.content.match(/[A-Z][0-9]+[-|‐][0-9]+/)
-        find_numbering = Station.find_by(numbering: station_numbering[0])
-        if station_numbering && find_numbering
-          bike_number = find_numbering.bike_number
+        find_station = Station.find_by(numbering: station_numbering[0])
+
+        if find_station
+          find_station.numbering = station_numbering[0]
+          find_station.latitude = coordinate.content.match(/(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)/)[3]
+          find_station.longitude = coordinate.content.match(/(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)/)[1]
+          stations << find_station
+        end
+
+        if station_numbering && find_station
+          bike_number = find_station.bike_number
           if bike_number == 0
             style_url.content = "#icon-ci-2"
           end
@@ -56,6 +66,8 @@ class Station < ApplicationRecord
           next
         end
       end
+
+      Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: :numbering, columns: [:bike_number]}
     end
 
     def export_kmz
