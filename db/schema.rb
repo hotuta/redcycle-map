@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(version: 20180819015134) do
     t.string "park_id"
     t.decimal "latitude", precision: 11, scale: 8
     t.decimal "longitude", precision: 11, scale: 8
-    t.text "description"
     t.index ["numbering"], name: "index_stations_on_numbering", unique: true
   end
 
