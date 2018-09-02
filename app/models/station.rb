@@ -164,7 +164,6 @@ class Station < ApplicationRecord
     end
 
     def get_bikes
-      api_url = 'https://tcc.docomo-cycle.jp/cgi-bin/csapi/csapiVD'
       header = {content_type: 'application/json'}
       stations = []
       Station.where(updated_at: [1.days.ago...Time.now]).each do |port|
@@ -176,7 +175,7 @@ class Station < ApplicationRecord
         <get_num>100</get_num>
         <get_start_no>1</get_start_no>
     </csreq>"
-        res = RestClient.post(api_url, query_xml, header) {|response| response}
+        res = RestClient.post(ENV['API_URL'], query_xml, header) {|response| response}
         doc = Nokogiri::XML(res.body)
         station = Station.new
         station.numbering = port.numbering
