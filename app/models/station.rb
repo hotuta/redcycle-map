@@ -99,6 +99,8 @@ class Station < ApplicationRecord
       sleep 15
       @session.find(:id, "map-action-add-layer").click
       sleep 15
+      @session.refresh
+      sleep 15
       @session.find(:id, "ly1-layerview-import-link").click
       sleep 15
 
