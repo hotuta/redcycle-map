@@ -101,7 +101,7 @@ class Station < ApplicationRecord
       sleep 15
       @session.refresh
       sleep 15
-      @session.find(:id, "ly1-layerview-import-link").click
+      @session.find(:id, "ly1-layerview-import-link").hover.click
       sleep 15
 
       html = @session.driver.browser.page_source
