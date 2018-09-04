@@ -150,7 +150,13 @@ class Station < ApplicationRecord
           ports_path.count.times do |port_count|
             station_numbering = ports_path[port_count].text.match(/[A-Z][0-9]+-[0-9]+/)
             if station_numbering
-              station = Station.new
+              find_station = Station.find_by(numbering: station_numbering[0])
+              if find_station
+                station = find_station
+              else
+                station = Station.new
+              end
+
               station.numbering = station_numbering[0]
               station.name = ports_path[port_count].text.match(/(.*.\D+)\d+台/)[1]
               station.bike_number = ports_path[port_count].text.match(/\D+(\d+)台/)[1]
@@ -164,7 +170,7 @@ class Station < ApplicationRecord
             end
           end
 
-          columns = Station.column_names - ["id", "numbering", "created_at", "updated_at"]
+          columns = Station.column_names - %W(id numbering created_at updated_at latitude longitude)
           Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: [:numbering], columns: columns}
 
           next_css_path = 'div.main_inner_wide_right > form:nth-child(1) > .button_submit[value="→　次へ/NEXT PAGE"]'
