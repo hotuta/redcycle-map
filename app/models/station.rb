@@ -80,13 +80,13 @@ class Station < ApplicationRecord
     end
 
     def upload_kmz
-      @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
+      @session.visit 'https://www.google.com/maps/d/edit?mid=1k4SIx3So1kuSGALx3s8RsCpRdQ1x8d7S'
       # YAMLファイルにCookie情報をエクスポート
       # File.open('./yaml.dump', 'w') {|f| f.write(YAML.dump(@session.driver.browser.manage.all_cookies))}
       YAML.load(Base64.strict_decode64(ENV['YAML_DUMP'])).each do |d|
         @session.driver.browser.manage.add_cookie d
       end
-      @session.visit 'https://www.google.com/maps/d/edit?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p'
+      @session.visit 'https://www.google.com/maps/d/edit?mid=1k4SIx3So1kuSGALx3s8RsCpRdQ1x8d7S'
 
       # FIXME: sleepは暫定措置
       sleep 15

@@ -17,7 +17,7 @@
 
 ### 非公式マップ(Googleマイマップ)
 
-https://www.google.com/maps/d/viewer?mid=1UBbXpP51gfUJ8UmXLy5DJpdlMZsYgr4p
+https://www.google.com/maps/d/viewer?mid=1k4SIx3So1kuSGALx3s8RsCpRdQ1x8d7S
 
 ### 本家(Googleマイマップ)
 
