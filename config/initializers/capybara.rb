@@ -9,6 +9,6 @@ Rails.application.config.to_prepare do
 
   Capybara.configure do |config|
     config.default_driver = :chrome
-    config.default_max_wait_time = 5
+    config.default_max_wait_time = 15
   end
 end
