@@ -88,39 +88,31 @@ class Station < ApplicationRecord
       end
       @session.visit 'https://www.google.com/maps/d/edit?mid=1k4SIx3So1kuSGALx3s8RsCpRdQ1x8d7S'
 
-      # FIXME: sleepは暫定措置
-      sleep 15
-
       # 既に空のレイヤーが追加されている場合は削除する
       @delete_layer_xpath = "//div[@id='ly1-layer-header']/div[3]"
       @delete_has_xpath = @delete_layer_xpath
       delete_layer_has_xpath
 
-      sleep 15
       @session.find(:id, "map-action-add-layer").click
-      sleep 15
-      @session.refresh
-      sleep 15
       @session.find(:id, "ly1-layerview-import-link").hover.click
-      sleep 15
 
       html = @session.driver.browser.page_source
       doc = Nokogiri::HTML(html)
 
-      frame = doc.xpath("/html/body/div/div[2]/iframe").attribute("id").text
+      frame = doc.xpath("//div[2]/iframe").attribute("id").text
       @session.driver.browser.switch_to.frame frame
 
       filename = 'edit_map.kmz'
       file = File.join(Dir.pwd, filename)
-      @session.find(:xpath, "//*[@id='doclist']/div/div[4]/div[2]/div/div[2]/div/div/div[1]/div/div[2]/input[@type='file']", visible: false).send_keys file
+      @session.find(:xpath, "//*[@id='doclist']//input[@type='file']", visible: false).send_keys file
+      @session.has_no_css?('#doclist')
 
       @session.driver.browser.switch_to.window @session.driver.browser.window_handle
 
-      # レイヤーを消す
-      sleep 15
+      @session.has_xpath?('//*[@id="map-title-desc-bar"]/div//div[2]')
+
       @delete_layer_xpath = "//div[@id='ly0-layer-header']/div[3]"
       delete_layer_has_xpath
-      sleep 15
       @session.driver.quit
       File.delete 'edit_map.kmz'
     end
@@ -210,15 +202,12 @@ class Station < ApplicationRecord
     def delete_layer_has_xpath
       5.times do
         @session.refresh
-        sleep 15
         if @session.has_xpath?(@delete_has_xpath)
           puts @delete_layer_xpath
           @session.find(:xpath, @delete_layer_xpath, visible: false).hover.click
-          sleep 5
           @session.all(:xpath, "//*[@id='layerview-menu']/div[2]/div", visible: false).first.hover.click
-          sleep 10
           @session.find(:xpath, "//*[@id='cannot-undo-dialog']/div[3]/button[1]", visible: false).hover.click
-          sleep 15
+          @session.has_xpath?('//*[@id="map-title-desc-bar"]/div//div[2]')
         else
           break
         end
