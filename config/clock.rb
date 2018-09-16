@@ -12,6 +12,6 @@ module Clockwork
   end
 
   every(10.minute, 'Update bike number') do
-    Station.update_mymaps
+    Mymap.update
   end
 end
