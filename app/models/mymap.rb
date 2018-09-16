@@ -51,7 +51,7 @@ class Mymap
       # 既に空のレイヤーが追加されている場合は削除する
       @delete_layer_xpath = "//div[@id='ly1-layer-header']/div[3]"
       @delete_has_xpath = @delete_layer_xpath
-      delete_layer_has_xpath
+      delete_layer(1, 1)
 
       @session.find(:id, "map-action-add-layer").click
       @session.find(:id, "ly1-layerview-import-link").hover.click
@@ -71,18 +71,16 @@ class Mymap
 
       @session.has_xpath?('//*[@id="map-title-desc-bar"]/div//div[2]')
 
-      @delete_layer_xpath = "//div[@id='ly0-layer-header']/div[3]"
-      delete_layer_has_xpath
+      delete_layer(1, 0)
       @session.driver.quit
       File.delete 'edit_map.kmz'
     end
 
-    def delete_layer_has_xpath
+    def delete_layer(check_layer_num, remove_layer_num)
       5.times do
         @session.refresh
-        if @session.has_xpath?(@delete_has_xpath)
-          puts @delete_layer_xpath
-          @session.find(:xpath, @delete_layer_xpath, visible: false).hover.click
+        if @session.has_xpath?("//div[@id='ly#{check_layer_num}-layer-header']/div[3]")
+          @session.find(:xpath, "//div[@id='ly#{remove_layer_num}-layer-header']/div[3]", visible: false).hover.click
           @session.all(:xpath, "//*[@id='layerview-menu']/div[2]/div", visible: false).first.hover.click
           @session.find(:xpath, "//*[@id='cannot-undo-dialog']/div[3]/button[1]", visible: false).hover.click
           @session.has_xpath?('//*[@id="map-title-desc-bar"]/div//div[2]')
