@@ -26,14 +26,17 @@ class Station < ApplicationRecord
         station_numbering = station_name.content.match(/[A-Z][0-9]+[-|‐][0-9]+/)
         find_station = Station.find_by(numbering: station_numbering[0])
 
-        if find_station
+        find_station = nil
+        find_station = Station.find_by(numbering: station_numbering[0]) if station_numbering.present?
+
+        if find_station.present?
           find_station.numbering = station_numbering[0]
           find_station.latitude = coordinate.content.match(/(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)/)[3]
           find_station.longitude = coordinate.content.match(/(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)/)[1]
           stations << find_station
         end
 
-        if station_numbering && find_station
+        if station_numbering.present? && find_station.present?
           bike_number = find_station.bike_number
           if bike_number == 0
             style_url.content = "#icon-ci-2"
