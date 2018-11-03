@@ -47,6 +47,8 @@ class Station < ApplicationRecord
       end
 
       Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: :numbering, columns: [:bike_number]}
+
+      @doc
     end
 
     def login

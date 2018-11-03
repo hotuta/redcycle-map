@@ -7,8 +7,8 @@ class Mymap
     def update
       Station.get_bikes
       get_station_map
-      Station.parse_and_edit_kml
-      export_kmz
+      doc = Station.parse_and_edit_kml
+      export_kmz(doc)
       upload_kmz
     end
 
@@ -27,12 +27,9 @@ class Mymap
       File.delete 'map.kmz'
     end
 
-    def export_kmz
-      file = File.read("map/doc.kml")
-      @doc = Nokogiri::XML(file)
-
+    def export_kmz(doc)
       f = File.new("map/doc.kml", "w")
-      f << @doc.to_xml
+      f << doc.to_xml
       f.close
 
       Archive::Zip.archive('edit_map.kmz', 'map/.')
