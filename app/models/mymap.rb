@@ -40,13 +40,13 @@ class Mymap
     end
 
     def upload_kmz
-      @session.visit 'https://www.google.com/maps/d/edit?mid=1k4SIx3So1kuSGALx3s8RsCpRdQ1x8d7S'
+      @session.visit 'https://www.google.com/maps/d/edit?mid=105LHUShFiBhNviCJ5RCvIley_XLl0btn'
       # YAMLファイルにCookie情報をエクスポート
       # File.open('./yaml.dump', 'w') {|f| f.write(YAML.dump(@session.driver.browser.manage.all_cookies))}
       YAML.load(Base64.strict_decode64(ENV['YAML_DUMP'])).each do |d|
         @session.driver.browser.manage.add_cookie d
       end
-      @session.visit 'https://www.google.com/maps/d/edit?mid=1k4SIx3So1kuSGALx3s8RsCpRdQ1x8d7S'
+      @session.visit 'https://www.google.com/maps/d/edit?mid=105LHUShFiBhNviCJ5RCvIley_XLl0btn'
 
       # 既に空のレイヤーが追加されている場合は削除する
       @delete_layer_xpath = "//div[@id='ly1-layer-header']/div[3]"
