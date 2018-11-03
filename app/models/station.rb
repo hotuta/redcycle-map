@@ -114,7 +114,8 @@ class Station < ApplicationRecord
       stations = []
       Station.where(updated_at: [1.days.ago...Time.now]).each do |port|
         next if port.park_id.blank?
-        query_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+        Retryable.retryable(tries: 5, sleep: 5) do
+          query_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <csreq>
         <msgtype>3</msgtype>
         <aplcode>#{ENV['APLCODE']}</aplcode>
@@ -122,13 +123,14 @@ class Station < ApplicationRecord
         <get_num>100</get_num>
         <get_start_no>1</get_start_no>
     </csreq>"
-        res = RestClient.post(ENV['API_URL'], query_xml, header) {|response| response}
-        doc = Nokogiri::XML(res.body)
-        station = Station.new
-        station.numbering = port.numbering
-        station.bike_number = doc.at('//total_num').text
-        stations << station
-        sleep rand(0.3..0.5)
+          res = RestClient.post(ENV['API_URL'], query_xml, header) {|response| response}
+          doc = Nokogiri::XML(res.body)
+          station = Station.new
+          station.numbering = port.numbering
+          station.bike_number = doc.at('//total_num').text
+          stations << station
+          sleep rand(0.3..0.5)
+        end
       end
 
       Station.import stations, recursive: true, on_duplicate_key_update: {conflict_target: :numbering, columns: [:bike_number]}
