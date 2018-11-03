@@ -24,7 +24,6 @@ class Station < ApplicationRecord
       stations = []
       station_names.zip(style_urls, coordinates).each do |station_name, style_url, coordinate|
         station_numbering = station_name.content.match(/[A-Z][0-9]+[-|‐][0-9]+/)
-        find_station = Station.find_by(numbering: station_numbering[0])
 
         find_station = nil
         find_station = Station.find_by(numbering: station_numbering[0]) if station_numbering.present?
@@ -112,6 +111,7 @@ class Station < ApplicationRecord
       header = {content_type: 'application/json'}
       stations = []
       Station.where(updated_at: [1.days.ago...Time.now]).each do |port|
+        next if port.park_id.blank?
         query_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <csreq>
         <msgtype>3</msgtype>
