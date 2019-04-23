@@ -50,7 +50,7 @@ GEM
       io-like (~> 0.3.0)
     arel (9.0.0)
     builder (3.2.3)
-    byebug (10.0.2)
+    byebug (11.0.1)
     capybara (3.0.2)
       addressable
       mini_mime (>= 0.1.3)
