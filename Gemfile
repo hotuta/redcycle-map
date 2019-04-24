@@ -27,7 +27,7 @@ gem 'puma', '~> 3.7'
 # gem 'rack-cors'
 
 gem 'capybara', '3.0.2'
-gem 'selenium-webdriver', '3.11.0'
+gem 'selenium-webdriver', '3.142.0'
 gem 'rest-client'
 gem 'archive-zip'
 
