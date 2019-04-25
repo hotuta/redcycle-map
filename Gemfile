@@ -26,7 +26,7 @@ gem 'puma', '~> 3.7'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
-gem 'capybara', '3.0.2'
+gem 'capybara', '3.18.0'
 gem 'selenium-webdriver', '3.11.0'
 gem 'rest-client'
 gem 'archive-zip'
